@@ -142,7 +142,7 @@ class MyPlugin(Plugin):
         text = "({:1.2f},{:1.2f})".format(pos['x'],pos['y'])
         self._widget.joyPosLabel.setText(text)
 
-    	def processTimerShot(self):
+    def processTimerShot(self):
 		joy = self.getROSJoyValue()
 		msg = Joy()
 		msg.header.stamp = rospy.Time.now()
