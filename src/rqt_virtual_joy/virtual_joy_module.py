@@ -142,26 +142,34 @@ class MyPlugin(Plugin):
         text = "({:1.2f},{:1.2f})".format(pos['x'],pos['y'])
         self._widget.joyPosLabel.setText(text)
 
-    def processTimerShot(self):
-        joy = self.getROSJoyValue()
-        msg = Joy()
-        msg.header.stamp = rospy.Time.now()
-        msg.axes.append(float(joy['x']))
-        msg.axes.append(float(joy['y']))
+    	def processTimerShot(self):
+		joy = self.getROSJoyValue()
+		msg = Joy()
+		msg.header.stamp = rospy.Time.now()
+		msg.axes.append(float(joy['x']))
+		msg.axes.append(float(joy['y']))
+		msg.axes.append(0.0)
+		msg.axes.append(0.0)
+		msg.axes.append(0.0)
+		msg.axes.append(0.0)
 
-        button_num = 1
-        while True:
-            try:
-                msg.buttons.append(eval("self._widget.button"+str(button_num)).isDown())
-                button_num+=1
-            except:
-                break
+		button_num = 1
+		while True:
+			try:
+				msg.buttons.append(eval("self._widget.button"+str(button_num)).isDown())
+				button_num+=1
+			except:
+				break
 
-        try:
-            self.pub.publish(msg)
-        except:
-            rospy.logwarn("publisher not initialized")
-            pass
+		msg.axes[4] = msg.buttons[1]
+		if msg.buttons[2] != 0.0:
+			msg.axes[4] = -1
+
+		try:
+			self.pub.publish(msg)
+		except:
+			rospy.logwarn("publisher not initialized")
+			pass
 
     def getROSJoyValue(self):
         return self._widget.joy.getJoyValue()
